@@ -1,0 +1,47 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+{% include "header.html" %}
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://images.pexels.com/photos/1906606/pexels-photo-1906606.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="page-heading">
+            <h1>Messages Waiting</h1>
+            <span class="subheading">All the messages that I need to answer to.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        {% for message in all_messages %}
+        <div class="post-preview">
+          <a href="{{ url_for('show_message', message_id=message.id) }}">
+            <h2 class="post-title">
+              Message from: {{message.email}}
+            </h2>
+            <h3 class="post-subtitle">
+              Phone number: {{message.phone}}
+            </h3>
+          </a>
+
+        </div>
+        <hr>
+        {% endfor %}
+
+      </div>
+    </div>
+  </div>
+
+
+{% include "footer.html" %}
+{% endblock %}

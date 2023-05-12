@@ -1,0 +1,36 @@
+{% include "header.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://images.pexels.com/photos/317355/pexels-photo-317355.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>Message From: {{user_message.email}}</h1>
+            <h2 class="subheading">Phone number: {{user_message.phone}}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Message Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            {{ user_message.message|safe }}
+          <hr>
+
+          {{ ckeditor.load() }}
+          {{ ckeditor.config(name='message_to_user') }}
+          {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+          </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+{% include "footer.html" %}

@@ -1,0 +1,156 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% include "header.html" %}
+
+<style>
+  /* Center the loader */
+  #loader {
+    position: static;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+    width: 120px;
+    height: 120px;
+    margin: auto;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+  }
+
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Add animation to "page content" */
+  .animate-bottom {
+    position: relative;
+    -webkit-animation-name: animatebottom;
+    -webkit-animation-duration: 1s;
+    animation-name: animatebottom;
+    animation-duration: 1s
+  }
+
+  @-webkit-keyframes animatebottom {
+    from { bottom:-100px; opacity:0 }
+    to { bottom:0px; opacity:1 }
+  }
+
+  @keyframes animatebottom {
+    from{ bottom:-100px; opacity:0 }
+    to{ bottom:0; opacity:1 }
+  }
+
+  .select2-container {
+    width: 100% !important;
+  }
+
+  .select2-selection__rendered {
+    line-height: calc(1.5em + 0.75rem + 2px) !important;
+  }
+
+  .select2-container .select2-selection--single {
+    height: calc(1.5em + 0.75rem + 2px) !important;
+  }
+
+  .select2-selection__arrow {
+    height: calc(1.5em + 0.75rem + 2px) !important;
+  }
+
+  .select2-selection__clear {
+    height: calc(1.5em + 0.75rem + 2px) !important;
+  }
+
+  .select2-selection__placeholder {
+    line-height: calc(1.5em + 0.75rem + 2px) !important;
+  }
+</style>
+
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('{{ url_for('static', filename='img/heart-disease.jpg')}}')">
+<!--  <header class="masthead" style="background-image: url('https://images.unsplash.com/photo-1470092306007-055b6797ca72?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80')">-->
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="site-heading">
+            <h1>Cardiovascular Disease Detection</h1>
+            <span class="subheading">Find out if you have a cardiovascular disease today.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div id="loader" style="display:none;"></div>
+  <div id="detect-form">
+    {% if not current_user.is_authenticated: %}
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <span class="sign-title" style="font-size: 1.5rem">
+          Please login to find out if you have a heart disease or not, or register if you haven't already.
+        </span>
+        <br><br>
+        <hr>
+        <br><br>
+        <h4 class="sign-subtitle">
+          Why should I use this website? How can I know it's reliable?
+        </h4>
+        <p>
+          This website's purpose is to help you find out if you have a heart disease and to save you time and money.
+        </p>
+        <p>
+          To give you a reliable answer we compare your current health status against the health status of tens of thousands of other people.
+        </p>
+        <p>So all that's left is to register/login and find out if you have a heart disease or not!</p>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="container">
+    <div class="row">
+
+      <div class="col-lg-8 col-md-10 mx-auto content">
+        <div class="post-preview">
+          <h2 class="detect-title">
+            Enter your details:
+          </h2>
+          <br>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <hr>
+  </div>
+
+
+<script>
+  function loader() {
+    document.getElementById("loader").style.display = "block";
+    document.getElementById("detect-form").style.display = "none";
+  }
+</script>
+
+{% include "footer.html" %}

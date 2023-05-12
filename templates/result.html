@@ -1,0 +1,51 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block content %}
+{% include "header.html" %}
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('https://news.weill.cornell.edu/sites/default/files/styles/news_story_featured_image/public/story_featured_images/shutterstock_1684622086.jpg?itok=QrnacMML&c=c4e66490be3a48f6788b932dd8860d85')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="page-heading">
+            <h1>Heart Disease Result</h1>
+            <span class="subheading">Your health details have been successfully entered into the system.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="row">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+  </div>
+
+
+    <div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto content">
+            {% if user_status == "Sick": %}
+                <span>According to the data you entered, <b>I think you have a heart disease.</b></span>
+            {% else %}
+                <span>According to the data you entered, <b>I don't think you have a heart disease!</b> You were found healthy!!!</span>
+            {% endif %}
+            <br><br>
+            <span>*Although, the results are not accurate in 100%, so I recommend you to go and see a doctor to get another opinion.</span>
+
+        </div>
+    </div>
+    </div>
+
+
+{% include "footer.html" %}
+{% endblock %}

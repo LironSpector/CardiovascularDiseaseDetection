@@ -1,0 +1,32 @@
+{% include "header.html" %}
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url({{ url_for('static', filename='img/about-bg.jpg')}})">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="page-heading">
+            <h1>About Me</h1>
+            <span class="subheading">This is what I do.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <p>My name is Liron Spector. I am 16 years old and  I am a student in "Blich" high school.</p>
+        <p>I have built this website to help people find out if they have a cardiovascular disease or not. I'm not asking you to give me any permissions, you can register for free and check.</p>
+        <p>In addition to helping you find out if you have a cardiovascular disease, I also have general information and details about how you can improve your health.</p>
+        <p>All you need to do is to give some details about your current health and I will try to tell you if you have a cardiovascular disease. I don’t promise to give you an accurate answer, but I will give you another opinion that might help you find out if you have a cardiovascular disease.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  {% include "footer.html" %}
