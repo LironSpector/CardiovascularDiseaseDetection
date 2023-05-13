@@ -97,27 +97,23 @@ def activate_model(user_data):
         n_estimators=300,
         subsample=0.8
     )
-    #
-    # filename = 'xgb_finalized_model.sav'
-    # if not os.path.isfile(filename):
-    #     xgb_clf.fit(train_inputs, train_labels)
-    #     pred = xgb_clf.predict(new_test_input.reshape(1, 9))
-    #
-    #     print("save model at local drive: xgb_finalized_model.sav")
-    #     with open(filename, 'wb') as fn:
-    #         pickle.dump(xgb_clf, fn)
-    # else:
-    #     with open(filename, 'rb') as infile:
-    #         xgb_clf = pickle.load(infile)
-    #         pred = xgb_clf.predict(new_test_input.reshape(1, 9))
-    #
-    # if pred == [0]:
-    #     return "Healthy"
-    # return "Sick"
 
-    if True:
+    filename = 'xgb_finalized_model.sav'
+    if not os.path.isfile(filename):
+        xgb_clf.fit(train_inputs, train_labels)
+        pred = xgb_clf.predict(new_test_input.reshape(1, 9))
+
+        print("save model at local drive: xgb_finalized_model.sav")
+        with open(filename, 'wb') as fn:
+            pickle.dump(xgb_clf, fn)
+    else:
+        with open(filename, 'rb') as infile:
+            xgb_clf = pickle.load(infile)
+            pred = xgb_clf.predict(new_test_input.reshape(1, 9))
+
+    if pred == [0]:
         return "Healthy"
-    # return "Sick"
+    return "Sick"
 
 
 def normalize_data(df, input_columns, output_column):
@@ -464,61 +460,61 @@ def delete_post(post_id):
     return redirect(url_for('show_all_posts'))
 
 
-@app.route('/messages-waiting', methods=["GET", "POST"])
-@admin_only
-def show_all_messages():
-    """
-    Renders the page that displays all the waiting messages from users.
-    :return: It renders the 'show_all_messages.html' template with the users' messages from the database.
-    """
-    messages = MessageWaiting.query.all()
-    return render_template("show_all_messages.html", all_messages=messages)
-
-
-@app.route("/message/<int:message_id>", methods=["GET", "POST"])
-@admin_only
-def show_message(message_id):
-    """
-    Renders an individual message page and handles form submissions for response about the current message.
-    If a valid response form is submitted, sends an email to the user that answers his question
-    and deletes his question details from the database.
-    :param message_id: The id of the message to be displayed and responded to.
-    :return: If a valid response form is submitted, it redirects to the 'show_all_messages' page.
-             Otherwise, it renders the 'message.html' template with the message details and form.
-    """
-    requested_message = MessageWaiting.query.get(message_id)
-    form = ResponseForm()
-    if form.validate_on_submit():
-        message_to_user = form.message_to_user.data
-        message_to_user = message_to_user.replace('<p>', '').replace('</p>', '')
-        message_to_user = html.unescape(message_to_user)
-        message_to_user.encode('utf-8')
-
-        user_message = MessageWaiting.query.get(message_id)
-        email = user_message.email
-        phone = user_message.phone
-
-        send_email(email, phone, message_to_user)
-
-        delete_message(message_id)
-
-        return redirect(url_for('show_all_messages'))
-
-    return render_template("message.html", user_message=requested_message, form=form)
-
-
-@app.route("/delete/<int:message_id>")
-@admin_only
-def delete_message(message_id):
-    """
-    Deletes a user message with the given message id from the database.
-    :param message_id: The id of the message to be deleted.
-    :return: It redirects to the 'show_all_messages' page after deleting the current message.
-    """
-    message_to_delete = MessageWaiting.query.get(message_id)
-    db.session.delete(message_to_delete)
-    db.session.commit()
-    # return redirect(url_for('show_all_messages'))
+# @app.route('/messages-waiting', methods=["GET", "POST"])
+# @admin_only
+# def show_all_messages():
+#     """
+#     Renders the page that displays all the waiting messages from users.
+#     :return: It renders the 'show_all_messages.html' template with the users' messages from the database.
+#     """
+#     messages = MessageWaiting.query.all()
+#     return render_template("show_all_messages.html", all_messages=messages)
+#
+#
+# @app.route("/message/<int:message_id>", methods=["GET", "POST"])
+# @admin_only
+# def show_message(message_id):
+#     """
+#     Renders an individual message page and handles form submissions for response about the current message.
+#     If a valid response form is submitted, sends an email to the user that answers his question
+#     and deletes his question details from the database.
+#     :param message_id: The id of the message to be displayed and responded to.
+#     :return: If a valid response form is submitted, it redirects to the 'show_all_messages' page.
+#              Otherwise, it renders the 'message.html' template with the message details and form.
+#     """
+#     requested_message = MessageWaiting.query.get(message_id)
+#     form = ResponseForm()
+#     if form.validate_on_submit():
+#         message_to_user = form.message_to_user.data
+#         message_to_user = message_to_user.replace('<p>', '').replace('</p>', '')
+#         message_to_user = html.unescape(message_to_user)
+#         message_to_user.encode('utf-8')
+#
+#         user_message = MessageWaiting.query.get(message_id)
+#         email = user_message.email
+#         phone = user_message.phone
+#
+#         send_email(email, phone, message_to_user)
+#
+#         delete_message(message_id)
+#
+#         return redirect(url_for('show_all_messages'))
+#
+#     return render_template("message.html", user_message=requested_message, form=form)
+#
+#
+# @app.route("/delete/<int:message_id>")
+# @admin_only
+# def delete_message(message_id):
+#     """
+#     Deletes a user message with the given message id from the database.
+#     :param message_id: The id of the message to be deleted.
+#     :return: It redirects to the 'show_all_messages' page after deleting the current message.
+#     """
+#     message_to_delete = MessageWaiting.query.get(message_id)
+#     db.session.delete(message_to_delete)
+#     db.session.commit()
+#     # return redirect(url_for('show_all_messages'))
 
 
 if __name__ == "__main__":
