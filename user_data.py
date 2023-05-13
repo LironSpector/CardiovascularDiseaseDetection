@@ -1,4 +1,4 @@
-class ModelData:
+class UserData:
     def __init__(self, age, height, weight, ap_hi, ap_lo, cholesterol,
                  glucose, smoke, active):
         self.age = age

@@ -9,7 +9,7 @@ from forms import CreatePostForm, RegisterForm, LoginForm, DetectForm, ContactFo
 from functools import wraps
 from flask import abort
 import smtplib
-from model_data import ModelData
+from user_data import UserData
 import pandas as pd
 from xgboost import XGBClassifier
 import numpy as np
@@ -38,14 +38,13 @@ login_manager.init_app(app)
 
 def send_email(email, phone, message):
     """
-    Sends an email to the person who asked me a question in the 'Contact Me' page.
+    Sends an email to a person who asked me a question in the 'Contact Me' page.
     :param email: the user's email.
     :param phone: the user's phone number.
     :param message: the message that I want to send to the person.
     :return: None.
     """
     email_message = f"Subject:New Message\n\nTo: {email}\nYour Phone Number: {phone}\n\n{message}"
-    print(email_message, "OOO")
     with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
         connection.starttls()
         connection.login(user=MY_EMAIL, password=MY_PASSWORD)
@@ -55,10 +54,11 @@ def send_email(email, phone, message):
             msg=f"{email_message}")
 
 
-def activate_model(model_data):
+def activate_model(user_data):
     """
-
-    :param model_data: the
+    Opens the dataframe and prepares the data for the training. Then, activates the XGBClassifier model on the data
+    the user entered in my website, and returns an answer if he is healthy or sick.
+    :param user_data: the object of the UserData class that contains the user information.
     :return: 'Healthy' if the person was found healthy, or 'Sick' if the person was found with cardiovascular disease.
     """
     cardio_disease_df = pd.read_csv("static/data/cardio_train.csv", delimiter=";").set_index("id")
@@ -83,9 +83,9 @@ def activate_model(model_data):
     train_inputs, train_labels, max_values_list = normalize_data(cardio_disease_df, train_columns,
                                                                  has_cardio_disease_column)
 
-    new_test_input = np.array([model_data.ap_hi, model_data.ap_lo, model_data.age,
-                               model_data.cholesterol, model_data.weight, model_data.glucose, model_data.active,
-                               model_data.smoke, model_data.height])
+    new_test_input = np.array([user_data.ap_hi, user_data.ap_lo, user_data.age,
+                               user_data.cholesterol, user_data.weight, user_data.glucose, user_data.active,
+                               user_data.smoke, user_data.height])
 
     new_test_input = np.array([test_input / max_values for test_input, max_values in zip(new_test_input, max_values_list)])
     print(new_test_input)
@@ -221,6 +221,11 @@ def admin_only(f):
 
 @app.route('/', methods=["GET", "POST"])
 def home():
+    """
+    Renders the home page and handles form submissions for cardio disease detection.
+    :return: If a valid form is submitted, it redirects to the 'result' page.
+    Otherwise, it renders the 'index.html' template with the form.
+    """
     form = DetectForm()
     if form.validate_on_submit():
         # Get user health data
@@ -236,9 +241,8 @@ def home():
 
         cholesterol, glucose, smoke, active = convert_user_data(cholesterol, glucose, smoke, active)
 
-        model_data = ModelData(age, height, weight, ap_hi, ap_lo, cholesterol,
-                               glucose, smoke, active)
-        user_status = activate_model(model_data)
+        user_data = UserData(age, height, weight, ap_hi, ap_lo, cholesterol, glucose, smoke, active)
+        user_status = activate_model(user_data)
 
         return redirect(url_for("result", user_status=user_status))
 
@@ -247,6 +251,11 @@ def home():
 
 @app.route('/register', methods=["GET", "POST"])
 def register():
+    """
+    Renders the registration page and handles user registration.
+    :return: If a valid form is submitted, it redirects to the home page.
+    Otherwise, it renders the 'register.html' template with the form.
+    """
     form = RegisterForm()
     if form.validate_on_submit():
         if User.query.filter_by(email=form.email.data).first():
@@ -277,6 +286,12 @@ def register():
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
+    """
+    Renders the login page and handles user authentication.
+    :return: If a valid form is submitted and the user is authenticated, it redirects
+             to the home page. Otherwise, it renders the 'login.html' template with
+             the form.
+    """
     form = LoginForm()
     if form.validate_on_submit():
         # Login and validate the user.
@@ -300,34 +315,63 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+    """
+    Logs out the currently authenticated user.
+    :return: It redirects the user to the home page after logging out.
+    """
     logout_user()
     return redirect(url_for('home'))
 
 
 @app.route('/show-all-posts', methods=["GET", "POST"])
 def show_all_posts():
+    """
+    Renders a page that displays all the health posts.
+    :return: It renders the 'show_all_posts.html' template with the posts from the database.
+    """
     posts = BlogPost.query.all()
     return render_template("show_all_posts.html", all_posts=posts)
 
 
 @app.route('/results/<user_status>')
 def result(user_status):
+    """
+    Renders the result page with the user status (has/doesn't have cardio disease).
+    :param user_status: 'Healthy' if the person was found healthy, or 'Sick' if he was found with cardio disease.
+    :return: It renders the 'result.html' template and displays the result according to the user_status.
+    """
     return render_template("result.html", user_status=user_status)
 
 
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
+    """
+    Renders a specific post page.
+    :param post_id: The unique identifier of the post.
+    :return: It renders the 'post.html' template with the requested post.
+    """
     requested_post = BlogPost.query.get(post_id)
     return render_template("post.html", post=requested_post)
 
 
 @app.route("/about")
 def about():
+    """
+    Renders the about page with some details about the website, and me as the creator of this website.
+    :return: It renders the 'about.html' template.
+    """
     return render_template("about.html")
 
 
 @app.route("/contact", methods=['GET', 'POST'])
 def contact():
+    """
+    Renders the contact page and handles form submissions for users' messages. If a valid form is
+    submitted, adds the user data to my database.
+    :return: If a valid form is submitted, it renders the 'contact.html' template
+             with a success message. Otherwise, it renders the 'contact.html' template
+             with the contact form.
+    """
     form = ContactForm()
     if form.validate_on_submit():
         if MessageWaiting.query.filter_by(email=form.email.data).first():
@@ -354,6 +398,12 @@ def contact():
 @app.route("/new-post", methods=["GET", "POST"])
 @admin_only
 def add_new_post():
+    """
+    Renders the page for adding a new post and handles form submissions. If a valid form is
+    submitted, adds the post data to my database.
+    :return: If a valid form is submitted, it redirects to the 'show_all_posts' page.
+             Otherwise, it renders the 'make-post.html' template with the form.
+    """
     form = CreatePostForm()
     if form.validate_on_submit():
         new_post = BlogPost(
@@ -372,6 +422,12 @@ def add_new_post():
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 @admin_only
 def edit_post(post_id):
+    """
+    Renders the page for editing an existing post and handles form submissions.
+    :param post_id: The id of the post that will be edited.
+    :return: If a valid form is submitted, it redirects to the 'show_post' page with the post edited.
+             Otherwise, it renders the 'make-post.html' template with the form for editing.
+    """
     post = BlogPost.query.get(post_id)
     edit_form = CreatePostForm(
         title=post.title,
@@ -393,6 +449,11 @@ def edit_post(post_id):
 @app.route("/delete/<int:post_id>")
 @admin_only
 def delete_post(post_id):
+    """
+    Deletes a post from the database and redirects to the 'show_all_posts' page.
+    :param post_id: The id of the post to be deleted.
+    :return: It redirects to the 'show_all_posts' page.
+    """
     post_to_delete = BlogPost.query.get(post_id)
     db.session.delete(post_to_delete)
     db.session.commit()
@@ -400,13 +461,27 @@ def delete_post(post_id):
 
 
 @app.route('/messages-waiting', methods=["GET", "POST"])
+@admin_only
 def show_all_messages():
+    """
+    Renders the page that displays all the waiting messages from users.
+    :return: It renders the 'show_all_messages.html' template with the users' messages from the database.
+    """
     messages = MessageWaiting.query.all()
     return render_template("show_all_messages.html", all_messages=messages)
 
 
 @app.route("/message/<int:message_id>", methods=["GET", "POST"])
+@admin_only
 def show_message(message_id):
+    """
+    Renders an individual message page and handles form submissions for response about the current message.
+    If a valid response form is submitted, sends an email to the user that answers his question
+    and deletes his question details from the database.
+    :param message_id: The id of the message to be displayed and responded to.
+    :return: If a valid response form is submitted, it redirects to the 'show_all_messages' page.
+             Otherwise, it renders the 'message.html' template with the message details and form.
+    """
     requested_message = MessageWaiting.query.get(message_id)
     form = ResponseForm()
     if form.validate_on_submit():
@@ -431,6 +506,11 @@ def show_message(message_id):
 @app.route("/delete/<int:message_id>")
 @admin_only
 def delete_message(message_id):
+    """
+    Deletes a user message with the given message id from the database.
+    :param message_id: The id of the message to be deleted.
+    :return: It redirects to the 'show_all_messages' page after deleting the current message.
+    """
     message_to_delete = MessageWaiting.query.get(message_id)
     db.session.delete(message_to_delete)
     db.session.commit()
