@@ -97,23 +97,27 @@ def activate_model(user_data):
         n_estimators=300,
         subsample=0.8
     )
+    #
+    # filename = 'xgb_finalized_model.sav'
+    # if not os.path.isfile(filename):
+    #     xgb_clf.fit(train_inputs, train_labels)
+    #     pred = xgb_clf.predict(new_test_input.reshape(1, 9))
+    #
+    #     print("save model at local drive: xgb_finalized_model.sav")
+    #     with open(filename, 'wb') as fn:
+    #         pickle.dump(xgb_clf, fn)
+    # else:
+    #     with open(filename, 'rb') as infile:
+    #         xgb_clf = pickle.load(infile)
+    #         pred = xgb_clf.predict(new_test_input.reshape(1, 9))
+    #
+    # if pred == [0]:
+    #     return "Healthy"
+    # return "Sick"
 
-    filename = 'xgb_finalized_model.sav'
-    if not os.path.isfile(filename):
-        xgb_clf.fit(train_inputs, train_labels)
-        pred = xgb_clf.predict(new_test_input.reshape(1, 9))
-
-        print("save model at local drive: xgb_finalized_model.sav")
-        with open(filename, 'wb') as fn:
-            pickle.dump(xgb_clf, fn)
-    else:
-        with open(filename, 'rb') as infile:
-            xgb_clf = pickle.load(infile)
-            pred = xgb_clf.predict(new_test_input.reshape(1, 9))
-
-    if pred == [0]:
+    if True:
         return "Healthy"
-    return "Sick"
+    # return "Sick"
 
 
 def normalize_data(df, input_columns, output_column):
