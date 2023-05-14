@@ -5,6 +5,9 @@ from flask_ckeditor import CKEditorField
 
 
 class CreatePostForm(FlaskForm):
+    """
+    A form class for creating new posts.
+    """
     title = StringField("Blog Post Title", validators=[DataRequired()])
     subtitle = StringField("Subtitle", validators=[DataRequired()])
     img_url = StringField("Blog Image URL", validators=[DataRequired(), URL()])
@@ -13,6 +16,9 @@ class CreatePostForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
+    """
+    A form class for user registration.
+    """
     email = StringField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
     name = StringField("Name", validators=[DataRequired()])
@@ -20,12 +26,18 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
+    """
+    A form class for user login.
+    """
     email = StringField("Email", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Let Me In!")
 
 
 class DetectForm(FlaskForm):
+    """
+    A form class for cardiovascular disease detection.
+    """
     age = FloatField("Age", validators=[DataRequired()])
     height = IntegerField("Height", validators=[DataRequired()])
     weight = FloatField("Weight", validators=[DataRequired()])
@@ -48,6 +60,9 @@ class DetectForm(FlaskForm):
 
 
 class ContactForm(FlaskForm):
+    """
+    A form class for users to contact me if they have questions.
+    """
     email = StringField("Email Address", validators=[DataRequired(), Email()])
     phone_number = StringField("Phone Number", validators=[DataRequired()])
     message = StringField("Message", validators=[DataRequired()])
@@ -55,6 +70,9 @@ class ContactForm(FlaskForm):
 
 
 class ResponseForm(FlaskForm):
+    """
+    A form class for sending a response to users that asked me a question in the 'Contact Me' page.
+    """
     message_to_user = CKEditorField("Answer For The User:", validators=[DataRequired()])
     submit = SubmitField("Send To User")
 

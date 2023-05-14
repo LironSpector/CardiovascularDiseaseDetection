@@ -13,4 +13,4 @@ RUN pip install -r requirements.txt
 EXPOSE 1337
 
 # Use Gunicorn as the WSGI server to serve the Flask application
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["python", "main.py"]

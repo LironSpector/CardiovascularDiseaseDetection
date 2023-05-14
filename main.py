@@ -180,14 +180,20 @@ def load_user(user_id):
 
 
 class User(UserMixin, db.Model):
+    """
+    Represents a user in the application.
+    """
     __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), unique=True)
-    password = db.Column(db.String(100))
-    name = db.Column(db.String(100))
+    id = db.Column(db.Integer, primary_key=True)  # The user id.
+    email = db.Column(db.String(100), unique=True)  # The user email.
+    password = db.Column(db.String(100))  # The user encrypted password.
+    name = db.Column(db.String(100))  # The user name.
 
 
 class BlogPost(db.Model):
+    """
+    Represents a post in the application.
+    """
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), unique=True, nullable=False)
@@ -198,6 +204,9 @@ class BlogPost(db.Model):
 
 
 class MessageWaiting(db.Model):
+    """
+    Represents a message from a user waiting for me to answer it.
+    """
     __tablename__ = "emails_waiting"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(250), unique=True, nullable=False)
@@ -514,7 +523,6 @@ def delete_message(message_id):
     message_to_delete = MessageWaiting.query.get(message_id)
     db.session.delete(message_to_delete)
     db.session.commit()
-    # return redirect(url_for('show_all_messages'))
 
 
 if __name__ == "__main__":
