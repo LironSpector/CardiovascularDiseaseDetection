@@ -76,7 +76,6 @@
 
   <!-- Page Header -->
   <header class="masthead" style="background-image: url('{{ url_for('static', filename='img/heart-disease.jpg')}}')">
-<!--  <header class="masthead" style="background-image: url('https://images.unsplash.com/photo-1470092306007-055b6797ca72?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80')">-->
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
@@ -98,7 +97,7 @@
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
         <span class="sign-title" style="font-size: 1.5rem">
-          Please login to find out if you have a heart disease or not, or register if you haven't already.
+          Please login to find out if you have a cardiovascular disease, or register if you haven't already.
         </span>
         <br><br>
         <hr>
@@ -107,12 +106,12 @@
           Why should I use this website? How can I know it's reliable?
         </h4>
         <p>
-          This website's purpose is to help you find out if you have a heart disease and to save you time and money.
+          This website's purpose is to help you find out if you have a cardio disease and to save you time and money.
         </p>
         <p>
           To give you a reliable answer we compare your current health status against the health status of tens of thousands of other people.
         </p>
-        <p>So all that's left is to register/login and find out if you have a heart disease or not!</p>
+        <p>So all that's left to do is to register/login and find out if you have a cardio disease or not!</p>
       </div>
     </div>
   </div>
@@ -128,15 +127,7 @@
           <br>
         </div>
 
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-
-            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+        {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
       </div>
     </div>
   </div>

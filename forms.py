@@ -19,7 +19,7 @@ class RegisterForm(FlaskForm):
     """
     A form class for user registration.
     """
-    email = StringField("Email", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
     name = StringField("Name", validators=[DataRequired()])
     submit = SubmitField("Sign Me Up!")
@@ -29,7 +29,7 @@ class LoginForm(FlaskForm):
     """
     A form class for user login.
     """
-    email = StringField("Email", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
     submit = SubmitField("Let Me In!")
 
@@ -38,18 +38,14 @@ class DetectForm(FlaskForm):
     """
     A form class for cardiovascular disease detection.
     """
-    age = FloatField("Age", validators=[DataRequired()])
-    height = IntegerField("Height", validators=[DataRequired()])
-    weight = FloatField("Weight", validators=[DataRequired()])
-    ap_hi = IntegerField("Systolic blood pressure", validators=[DataRequired()])
-    ap_lo = IntegerField("Diastolic blood pressure", validators=[DataRequired()])
+    age = FloatField("Age (e.g. 55)", validators=[DataRequired()])
+    height = IntegerField("Height (in centimeters, e.g. 185)", validators=[DataRequired()])
+    weight = FloatField("Weight (e.g. 75)", validators=[DataRequired()])
+    ap_hi = IntegerField("Systolic blood pressure (e.g. 130)", validators=[DataRequired()])
+    ap_lo = IntegerField("Diastolic blood pressure (e.g. 80)", validators=[DataRequired()])
+    cholesterol = IntegerField("Enter your cholesterol level (e.g. 210)", validators=[DataRequired()])
+    glucose = IntegerField("Enter your glucose level (e.g. 125)", validators=[DataRequired()])
 
-    cholesterol = SelectField("Enter your cholesterol level:",
-                              choices=["less than 200 mg/dL", "200 to 239 mg/dL", "above 240 mg/dL"],
-                              validators=[DataRequired()])
-    glucose = SelectField("Enter your glucose level:",
-                          choices=["less than 100 mg/dL", "100 to 125 mg/dL", "above 125 mg/dL"],
-                          validators=[DataRequired()])
     smoke = SelectField("Do you smoke?",
                         choices=["Yes", "No"],
                         validators=[DataRequired()])

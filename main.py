@@ -146,16 +146,16 @@ def convert_user_data(cholesterol, glucose, smoke, active):
     :param active: 'Yes' if the person does any activity or 'No' if not.
     :return: The gender, cholesterol, glucose, smoke, alcohol and active value fields in the format of the train data.
     """
-    if cholesterol == "less than 200 mg/dL":
+    if cholesterol < 200:
         cholesterol = 1
-    elif cholesterol == "200 to 239 mg/dL":
+    elif cholesterol < 240:
         cholesterol = 2
     else:
         cholesterol = 3
 
-    if glucose == "less than 100 mg/dL":
+    if glucose < 100:
         glucose = 1
-    elif glucose == "100 to 125 mg/dL":
+    elif glucose < 125:
         glucose = 2
     else:
         glucose = 3
@@ -231,7 +231,8 @@ def admin_only(f):
 @app.route('/', methods=["GET", "POST"])
 def home():
     """
-    Renders the home page and handles form submissions for cardio disease detection.
+    Renders the home page (where users can enter their details to find out if the have a cardio disease) and handles
+    form submissions for cardio disease detection.
     :return: If a valid form is submitted, it redirects to the 'result' page.
     Otherwise, it renders the 'index.html' template with the form.
     """
@@ -249,7 +250,6 @@ def home():
         active = form.active.data
 
         cholesterol, glucose, smoke, active = convert_user_data(cholesterol, glucose, smoke, active)
-
         user_data = UserData(age, height, weight, ap_hi, ap_lo, cholesterol, glucose, smoke, active)
         user_status = activate_model(user_data)
 
