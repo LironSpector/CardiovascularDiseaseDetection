@@ -18,12 +18,15 @@ import pickle
 import html
 
 
-MY_EMAIL = "lirontheprog@gmail.com"
-MY_PASSWORD = "ciexaniegletpvnu"
-
+# MY_EMAIL = "lirontheprog@gmail.com"
+# MY_PASSWORD = "ciexaniegletpvnu"
+# SECRET_KEY = "ndu8r4huncyh352tnemsfh78h"
+MY_EMAIL = os.getenv("MY_EMAIL")
+MY_PASSWORD = os.getenv("MY_PASSWORD")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'ndu8r4huncyh352tnemsfh78h'
+app.config['SECRET_KEY'] = SECRET_KEY
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
@@ -63,17 +66,7 @@ def activate_model(user_data):
     """
     cardio_disease_df = pd.read_csv("static/data/cardio_train.csv", delimiter=";").set_index("id")
 
-    # drop duplicate rows.
-    cardio_disease_df.drop_duplicates()
-
-    # There was some exceptional data in the ap_hi and ap_lo columns, and here I remove it.
-    cardio_disease_df = cardio_disease_df.drop(cardio_disease_df[cardio_disease_df.ap_hi > 250].index)
-    cardio_disease_df = cardio_disease_df.drop(cardio_disease_df[cardio_disease_df.ap_hi < 40].index)
-    cardio_disease_df = cardio_disease_df.drop(cardio_disease_df[cardio_disease_df.ap_lo > 200].index)
-    cardio_disease_df = cardio_disease_df.drop(cardio_disease_df[cardio_disease_df.ap_lo < 20].index)
-
-    # the age in the dataframe is in days, so to get it in years I divided the values in 365.
-    cardio_disease_df["age"] = cardio_disease_df["age"] / 365
+    cardio_disease_df = cleanse_data(cardio_disease_df)
 
     has_cardio_disease_column = "cardio"
     co = cardio_disease_df.corr()[has_cardio_disease_column][:].abs().sort_values(ascending=False)[1:10]
@@ -114,6 +107,27 @@ def activate_model(user_data):
     if pred == [0]:
         return "Healthy"
     return "Sick"
+
+
+def cleanse_data(df):
+    """
+    cleansing the data in the cardio disease dataframe.
+    :param df: the cardio disease dataframe.
+    :return: the dataframe after cleansing.
+    """
+    # drop duplicate rows.
+    df.drop_duplicates()
+
+    # There was some exceptional data in the ap_hi and ap_lo columns, and here I remove it.
+    df = df.drop(df[df.ap_hi > 250].index)
+    df = df.drop(df[df.ap_hi < 40].index)
+    df = df.drop(df[df.ap_lo > 200].index)
+    df = df.drop(df[df.ap_lo < 20].index)
+
+    # the age in the dataframe is in days, so to get it in years I divided the values in 365.
+    df["age"] = df["age"] / 365
+
+    return df
 
 
 def normalize_data(df, input_columns, output_column):
