@@ -18,9 +18,6 @@ import pickle
 import html
 
 
-# MY_EMAIL = "lirontheprog@gmail.com"
-# MY_PASSWORD = "ciexaniegletpvnu"
-# SECRET_KEY = "ndu8r4huncyh352tnemsfh78h"
 MY_EMAIL = os.getenv("MY_EMAIL")
 MY_PASSWORD = os.getenv("MY_PASSWORD")
 SECRET_KEY = os.getenv("SECRET_KEY")
